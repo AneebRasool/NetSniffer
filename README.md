@@ -22,7 +22,7 @@ This project uses libpcap, an open source library that can capture network traff
 
 `Layer 3: Network Layer`: This layer controls the flow/routing of traffic. There are different protocols that route traffic and forward packets, such as `IPV4`, and `IPV6`. This packet sniffer works with the `IPv4` protocol, as other protocols have different protocol headers. `Ipv4` is the most common type of internet protocol used in most devices today. To ensure traffic is IPv4 and not any other protocol, we can parse ethernet frame (layer 2) (0->13 bytes). If the 12th and 13th byte, which shows the ether type (or what protocol it uses, such as IPv4, Ipv6, ARP etc) is `0x0800`, it is Ipv4. Otherwise the packet sniffer will not take capture packets.
 
-`Layer 3: Transport Layer`: This layer has many protocols that transport packet data accordingly. For example the UDP protocol is used in video games, to access servers fast by sending a lot of packets sequentially. 
+`Layer 4: Transport Layer`: This layer has many protocols that transport packet data accordingly. For example the UDP protocol is used in video games, to access servers fast by sending a lot of packets sequentially. 
 
 
 
