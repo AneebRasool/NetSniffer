@@ -20,11 +20,11 @@ This project uses libpcap, an open source library that can capture network traff
 
 <img width="541" height="423" alt="image" src="https://github.com/user-attachments/assets/14294c04-8e1a-48a3-962b-3c1fb457933b" />
 
-'Layer 2: Data Link Layer': This layer in Netsniffer allows to get the MAC adress (hardware adresses of devices) for the source and destination devices.
+`Layer 2: Data Link Layer`: This layer in Netsniffer allows to get the MAC adress (hardware adresses of devices) for the source and destination devices.
 
-'Layer 3: Network Layer': This layer controls the flow/routing of traffic. There are different protocols that route traffic and forward packets, such as 'IPV4', and 'IPV6'. This packet sniffer works with the 'IPv4' protocol, as other protocols have different protocol headers. 'Ipv4' is the most common type of internet protocol used in most devices today.
+`Layer 3: Network Layer`: This layer controls the flow/routing of traffic. There are different protocols that route traffic and forward packets, such as `IPV4`, and `IPV6`. This packet sniffer works with the `IPv4` protocol, as other protocols have different protocol headers. `Ipv4` is the most common type of internet protocol used in most devices today.
 
-'Layer 3: Transport Layer': This layer has many protocols that transport packet data accordingly. For example the UDP protocol is used in video games, to access servers fast by sending a lot of packets sequentially. 
+`Layer 3: Transport Layer`: This layer has many protocols that transport packet data accordingly. For example the UDP protocol is used in video games, to access servers fast by sending a lot of packets sequentially. 
 
 
 
