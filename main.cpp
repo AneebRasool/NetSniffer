@@ -16,7 +16,7 @@ cout << "time stamp: " << ctime(&header->ts.tv_sec) << endl;
 
 cout << "Mac adress: " << endl;
 for(int i=0;i<6;i++){
-       cout << hex << (int)packet[i] << " "; //print hexadecimal format
+       cout << hex << (int)packet[i] << " "; //print hexadecimal forma
 }
 cout << dec;
 }
