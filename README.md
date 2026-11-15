@@ -26,15 +26,19 @@ You can install CMAKE to compile files.
 
 
 # How it works
-This project uses libpcap, an open source library that can capture network traffic on network interfaces. The packet sniffer is a cybersecurity based project, based on the OSI model. It uses layers 2 through 4 on it.
+This project uses libpcap, an open source library that can capture network traffic on network interfaces. The packet sniffer is a cybersecurity based project, based mainly on the OSI model, ethernet type II model, and the TCP model. It uses layers 3 to 4 on it.
 
 <img width="541" height="423" alt="image" src="https://github.com/user-attachments/assets/14294c04-8e1a-48a3-962b-3c1fb457933b" />
 
-`Layer 2: Data Link Layer`: This layer in Netsniffer allows to get the MAC adress (hardware adresses of devices) for the source and destination devices. 
+`Layer 3: Network Layer`: This layer controls the flow/routing of traffic. There are different protocols that route traffic and forward packets, such as `IPV4`, and `IPV6`. This packet sniffer works with the `IPv4` protocol, as other protocols have different protocol headers. `Ipv4` is the most common type of internet protocol used in most devices today. To ensure traffic is IPv4 and not any other protocol, we can parse ethernet frame (layer 2) (0->13 bytes). If the 12th and 13th byte, which shows the ether type (or what protocol it uses, such as IPv4, Ipv6, ARP etc) is `0x0800`, it is Ipv4. Otherwise the packet sniffer will not take capture packets. We also can see the Ip adresses, as well as the source and destination ports (as seen from the Ipv4 header model)
 
-`Layer 3: Network Layer`: This layer controls the flow/routing of traffic. There are different protocols that route traffic and forward packets, such as `IPV4`, and `IPV6`. This packet sniffer works with the `IPv4` protocol, as other protocols have different protocol headers. `Ipv4` is the most common type of internet protocol used in most devices today. To ensure traffic is IPv4 and not any other protocol, we can parse ethernet frame (layer 2) (0->13 bytes). If the 12th and 13th byte, which shows the ether type (or what protocol it uses, such as IPv4, Ipv6, ARP etc) is `0x0800`, it is Ipv4. Otherwise the packet sniffer will not take capture packets.
 
-`Layer 4: Transport Layer`: This layer has many protocols that transport packet data accordingly. For example the UDP protocol is used in video games, to access servers fast by sending a lot of packets sequentially. 
+<img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/3dd0647e-518d-4194-ad95-6690cc9489cc" />
+
+`Layer 4: Transport Layer`: This layer has many protocols that transport packet data accordingly (from the IPv4 standard). For example the UDP protocol is used in video games, to access servers fast by sending a lot of packets sequentially, or TCP. Layer 4 also allows us to see the port types, from the tcp and udp ports such as SSH (port 22), HTTPS (port 443) etc. This is located after the IPv4 header. Note that after the IPv4 header, the port number is shared for BOTH udp and TCP, they are not sequentially stacked.
+
+<img width="474" height="316" alt="image" src="https://github.com/user-attachments/assets/726517a5-a371-4022-bcda-976995ff9df8" />
+
 
 
 
