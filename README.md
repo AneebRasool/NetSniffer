@@ -1,6 +1,15 @@
 # NetSniffer
 Netsniffer is a packet sniffer aimed at helping begginer/intermediate computer science and cybersecurity learners. It uses the open source libpcap library, and is written in c++. Net sniffer can be ran on linux to capture traffic which can help debug potential issues and helps you to understand what network activity goes to and from your linux based machines. I am working on this project to showcase my cybersecurity skills and to demonstrate my low level network programming skills using libpcap.
 
+
+# Capabilities
+- live capture of packets
+  
+Packet sniffer protocols supported (manually parsed):
+Ethernet II (mac adresses)
+IPv4
+(...working on adding more)
+
 # DEPENDANCIES
 Install libpcap on your target system (where you plan to run this.) 'Linux only!'
 ```bash
