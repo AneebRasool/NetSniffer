@@ -8,10 +8,10 @@ Netsniffer is a packet sniffer aimed at helping begginer/intermediate computer s
 - Session summary at the end (shows total packets captured + total network data in bytes)
   
 Protocols Parsed:
-Ethernet II (Ethertype, mac adresses)
-IPv4 (source/destination ip, protocols used)
-TCP (port type)
-UDP (port type)
+- Ethernet II (Ethertype, mac adresses)
+- IPv4 (source/destination ip, protocols used)
+- TCP (port type)
+- UDP (port type)
 
 # DEPENDANCIES
 Install libpcap on your target system (where you plan to run this.) 'Linux only!'
