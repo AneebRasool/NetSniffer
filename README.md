@@ -13,18 +13,6 @@ Protocols Parsed:
 - TCP (port type)
 - UDP (port type)
 
-# DEPENDANCIES
-Install libpcap on your target system (where you plan to run this.) 'Linux only!'
-```bash
- sudo apt install libpcap0.8 libpcap0.8-dev 
-```
-If you do not have it already, install a compiler of your choice (ex g++)
-```bash
- sudo apt install build-essential
-```
-You can install CMAKE to compile files.
-
-
 # How it works
 This project uses libpcap, an open source library that can capture network traffic on network interfaces. The packet sniffer is a cybersecurity based project, based mainly on the OSI model, ethernet type II model, and the TCP model. It uses layers 3 to 4 on it.
 
@@ -39,7 +27,20 @@ This project uses libpcap, an open source library that can capture network traff
 
 <img width="474" height="316" alt="image" src="https://github.com/user-attachments/assets/726517a5-a371-4022-bcda-976995ff9df8" />
 
+While libpcap helps to capture packets, it's a very low level library doing the minimum. All packet parsing, handling, additional features etc was done entirely from scratch by me.
 
+# DEPENDANCIES
+Install libpcap on your target system (where you plan to run this.) 'Linux only!'
+```bash
+ sudo apt install libpcap0.8 libpcap0.8-dev 
+```
+If you do not have it already, install a compiler of your choice (ex g++)
+```bash
+ sudo apt install build-essential
+```
+You can install CMAKE to compile files.
+
+# Installation
 
 
 
