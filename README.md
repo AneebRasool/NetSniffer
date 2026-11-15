@@ -5,6 +5,7 @@ Netsniffer is a packet sniffer aimed at helping begginer/intermediate computer s
 # Capabilities
 - live capture of packets
 - NetSniffer captures all Ipv4 based packets only.
+- Session summary at the end (shows total packets captured + total network data in bytes)
   
 Protocols Parsed:
 Ethernet II (Ethertype, mac adresses)
