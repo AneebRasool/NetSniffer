@@ -14,7 +14,7 @@ Protocols Parsed:
 - UDP (port type)
 
 # How it works
-This project uses libpcap, an open source library that can capture network traffic on network interfaces. The packet sniffer is a cybersecurity based project, based mainly on the OSI model, ethernet type II model, and the TCP model. It uses layers 3 to 4 on it.
+This project uses libpcap, an open source library that can capture network traffic on network interfaces. The packet sniffer is a cybersecurity based project, based mainly on the OSI model, ethernet type II model, TCP/UDP model and IPv4 model. It uses layers 3 to 4 on it.
 
 <img width="541" height="423" alt="image" src="https://github.com/user-attachments/assets/14294c04-8e1a-48a3-962b-3c1fb457933b" />
 
