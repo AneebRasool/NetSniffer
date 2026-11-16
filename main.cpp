@@ -2,7 +2,7 @@
 
 
 //---------------------------------------
-//All data summary variables
+//All data summary variable
 //---------------------------------------
 long long int total_bytes = 0;
 long long int total_packets = 0;
