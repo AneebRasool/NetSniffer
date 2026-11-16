@@ -43,5 +43,9 @@ You can install CMAKE to compile files.
 # Installation
 
 
+# Resources
+If you would like to learn cybersecurity, check out the models I discussed. If you would like to learn more about how libpcap operates, what each function does etc check out tcpdump's website: 'https://www.tcpdump.org/manpages/'
+
+
 
 
