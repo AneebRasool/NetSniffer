@@ -34,7 +34,6 @@ switch(protraw)
 return protocol;
 }
 
-
 string port_identifier(uint16_t srcport, uint16_t dstport)
 {
 
@@ -58,13 +57,25 @@ else port_type = "NA";
 return port_type;
 }
 
-
-void packet_handler(u_char *user_args, const struct pcap_pkthdr *header, const u_char *packet)
+void savefile() //will be used to save file if user wants...
 {
 
-ofstream obj1("Sniffer.txt", ios::in);
-obj1.close();
+ofstream savefile("Netsniffersave.txt", ios::out);
 
+savefile << "Timestamp"  << setw(15) 
+         << "Protocol"   <<  setw(42) 
+         << "Source IP:port -> Destination IP:port" << setw(18) 
+         << "port type"  << setw(17) 
+         << "Total size" << endl;
+
+
+
+
+savefile.close();
+
+}
+void packet_handler(u_char *user_args, const struct pcap_pkthdr *header, const u_char *packet)
+{
 
 total_packets++;
 total_bytes += header->len;
@@ -176,6 +187,7 @@ for (pcap_if_t *i = alldevs; i != nullptr; i = i->next) { //all devs = # of inte
 }
 
 
+
 cout << "What interface would you like to choose, ";
 cout << "enter number from #0 (first interface) to #-1? (last interface) going up by 1's: ";
 cin >> x;
@@ -191,9 +203,37 @@ pcap_t *handle = pcap_open_live(interfaces[x]->name, 65535, 1, 65, errorbuffer);
 
 global_handle = handle;
 
+
+// FILTERS
+string filter;
+cout << "Enter a BPF FILTER (ex tcp port 80): ";
+cin.ignore();
+getline(cin, filter);
+
+
+struct bpf_program fp; //needed to get filled by pcap_compile and used by pcap_setfilter!
+
+pcap_compile(handle, &fp, filter.c_str(), 1, PCAP_NETMASK_UNKNOWN); // pcap_t *p, struct bpf_program *fp, const char *str, int optimize, bpf_u_int32 netmask
+pcap_setfilter(handle, &fp);
+
+if (pcap_compile(handle, &fp, filter.c_str(), 1, PCAP_NETMASK_UNKNOWN) == -1){
+    cerr << "Compile error: " << pcap_geterr(handle) << endl;
+    pcap_freecode(&fp);
+}
+
+if (pcap_setfilter(handle, &fp) == -1){
+    cerr << "filter error: " << pcap_geterr(handle) << endl;
+    pcap_freecode(&fp);
+}
+
+
+
+
 if (handle == nullptr){
     cout << "could not open network interface " << interfaces[x]->name << errorbuffer;
 }
+
+
 
 cout << "Timestamp"  << setw(15) 
      << "Protocol"   <<  setw(42) 
@@ -206,7 +246,7 @@ cout << endl;
 
 signal(SIGINT, signalHandler); //gracefully closes the loop when ctrl c. (if packets are indefinetely running).
 
-pcap_loop(handle, 200, packet_handler, nullptr); // loop handler
+pcap_loop(handle, 10, packet_handler, nullptr); // loop handler
 
 /*---------------------------------------
               Summary
