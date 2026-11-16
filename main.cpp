@@ -1,11 +1,21 @@
-#include<iostream>
-#include<pcap.h>
-#include<vector>
-#include<ctime>
-#include<iomanip>
-#include<cstdlib>
-using namespace std;
+#include "header.h"
 
+
+//---------------------------------------
+//All data summary variables
+//---------------------------------------
+long long int total_bytes = 0;
+long long int total_packets = 0;
+
+pcap_t *global_handle = nullptr;
+
+void signalHandler(int){ //needed function for closing loop
+
+    if(global_handle != nullptr){
+        pcap_breakloop(global_handle);
+}
+
+}
 string protocol_identifier(uint8_t protraw)
 {
 
@@ -17,7 +27,7 @@ switch(protraw)
     case 6:  protocol = "TCP"; break;
     case 17: protocol = "UDP"; break;
     case 41: protocol = "IPv6"; break;
-    default: protocol = "Protocol unknown:" + to_string(protraw); // fallback shows the raw protocol number
+    default: protocol = "unknown:" + to_string(protraw); // fallback shows the raw protocol number
     break; 
 }
 
@@ -52,30 +62,43 @@ return port_type;
 void packet_handler(u_char *user_args, const struct pcap_pkthdr *header, const u_char *packet)
 {
 
+ofstream obj1("Sniffer.txt", ios::in);
+obj1.close();
+
+
+total_packets++;
+total_bytes += header->len;
+
 cout << left;
+uint16_t ethertype = (packet[12] << 8) | packet[13]; //finds ethertype (ex ipv4 vs ipv6.)
 
-uint16_t ethertype = (packet[12] << 8) | packet[13]; //finds ethertype (12th and 13th byte of ethernet layer!)
-
-//Outputs only if ethertype is ipv4 (to avoid outputting other garbled data thats not ipv4)
+//Outputs only if ethertype is ipv4.
 if (ethertype == 0x0800){
 
-
+//---------------------------------------
 //convert unix time to readable date/time.
+//---------------------------------------
 char timebuf[16];
 time_t secs = header->ts.tv_sec;
 tm *t = localtime(&secs);
 strftime(timebuf, sizeof(timebuf), "%I:%M:%S %p", t);
     cout << setw(18) << timebuf;
 
-
+    //---------------------------------------
     //find protocols
+    //---------------------------------------
     uint8_t protocol = (int)packet[23];
+
+
     cout << setw(11) << protocol_identifier(protocol);
 
 
     string ipflow = "";
 
+//---------------------------------------
 //source ip adress (based on ether type).
+//---------------------------------------
+
 string srcip = "";
     for(int i=26; i<30; i++){ // ethernet layer (2) ends at byte 13, and +12 bytes to 14bytes leads to 26th byte (source ip)
         srcip += to_string((int)packet[i]);
@@ -83,8 +106,9 @@ string srcip = "";
         srcip += ".";
     }
 
-
+//---------------------------------------
 //source port
+//---------------------------------------
 uint16_t srcport = (packet[34] << 8) | packet[35];
 
 
@@ -96,49 +120,54 @@ string dstip = "";
         dstip += ".";
     }
 
-//destination port
+/*---------------------------------------
+            destination port
+---------------------------------------*/
 uint16_t dstport = (packet[36] << 8) | packet[37];
 
 
+/*---------------------------------------
+            Ip adress + ports
+---------------------------------------*/
 ipflow += srcip; ipflow += ":"; ipflow += to_string(srcport);
     ipflow += " -> "; 
     ipflow += dstip; ipflow += ":"; ipflow += to_string(dstport);
     cout << setw(50) << ipflow;
 
 
-//make sure port types only display for TCP and UDP (no port types for other ports!)
+//make sure port types only display for TCP and UDP (no port types exist for other ports!)
 if(protocol == 6 || protocol == 17) cout << setw(16) << port_identifier(srcport, dstport);
 
 //if no port type, display no type.
 else cout << setw(10) << "No type";
 
 
-//packet length
+/*---------------------------------------
+            Packet size (Bytes)
+---------------------------------------*/
 cout << header->len << "B";
-}
-
-else{cout << "[NON-ipv4 packet captured]";}
 cout << endl;
 }
+}
 
 
+/*---------------------------------------
+              Int main
+---------------------------------------*/
 int main()
 {
 
 pcap_if_t *alldevs = nullptr;
 char errorbuffer[PCAP_ERRBUF_SIZE]; // stores any errors/issues.
-int interfacesuccess = pcap_findalldevs(&alldevs, errorbuffer); //Lists all network interfaces.
+int interfacesuccess = pcap_findalldevs(&alldevs, errorbuffer); //Lists all network interfaces
 
 
-if (interfacesuccess == -1){
-    cout << "error found: " << errorbuffer;
-}
-
+if (interfacesuccess == -1) cout << "error found: " << errorbuffer;
 
 else{
 
 int x;
-vector<pcap_if_t*> interfaces;
+vector<pcap_if_t*> interfaces; //vector stores all network interfaces
 
 cout << "Found interfaces: " << endl;
 for (pcap_if_t *i = alldevs; i != nullptr; i = i->next) { //all devs = # of interfaces from linked list.
@@ -157,19 +186,38 @@ if(x < 0 || x >= interfaces.size()){
 
 cout << "\nYou picked interface: " << interfaces[x]->name << endl;
 
+// (interface, byte limit, promiscious mode, time out (ms), err buf) - paramaters.
+pcap_t *handle = pcap_open_live(interfaces[x]->name, 65535, 1, 65, errorbuffer); 
 
-pcap_t *handle = pcap_open_live(interfaces[x]->name, 65535, 1, 75, errorbuffer); // (interface, byte limit, promiscious mode?, time out (ms), err buf) - paramaters.
+global_handle = handle;
 
 if (handle == nullptr){
     cout << "could not open network interface " << interfaces[x]->name << errorbuffer;
 }
 
-cout << "Timestamp" << setw(15) << "Protocol" << setw(42) << "Source IP:port -> Destination IP:port" << setw(18) << "port type" << setw(17) <<"Total size" << endl;
+cout << "Timestamp"  << setw(15) 
+     << "Protocol"   <<  setw(42) 
+     << "Source IP:port -> Destination IP:port" << setw(18) 
+     << "port type"  << setw(17) 
+     << "Total size" << endl;
+
 for(int i=0;i<110;i++) cout << "-";
 cout << endl;
 
+signal(SIGINT, signalHandler); //gracefully closes the loop when ctrl c. (if packets are indefinetely running).
 
-pcap_loop(handle, -1, packet_handler, nullptr);
+pcap_loop(handle, 200, packet_handler, nullptr); // loop handler
+
+/*---------------------------------------
+              Summary
+---------------------------------------*/
+
+
+cout << "---------------------------";
+cout << "\nSession summary: " << endl;
+cout << "Total packets captured: " << total_packets << endl;
+cout << "Total network data: " << total_bytes << "B" << endl;
+
 
 
 //ending processes
