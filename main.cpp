@@ -6,6 +6,7 @@
 //---------------------------------------
 long long int total_bytes = 0;
 long long int total_packets = 0;
+bool savefile = false;
 
 pcap_t *global_handle = nullptr;
 
@@ -33,7 +34,6 @@ switch(protraw)
 
 return protocol;
 }
-
 string port_identifier(uint16_t srcport, uint16_t dstport)
 {
 
@@ -57,23 +57,6 @@ else port_type = "NA";
 return port_type;
 }
 
-void savefile() //will be used to save file if user wants...
-{
-
-ofstream savefile("Netsniffersave.txt", ios::out);
-
-savefile << "Timestamp"  << setw(15) 
-         << "Protocol"   <<  setw(42) 
-         << "Source IP:port -> Destination IP:port" << setw(18) 
-         << "port type"  << setw(17) 
-         << "Total size" << endl;
-
-
-
-
-savefile.close();
-
-}
 void packet_handler(u_char *user_args, const struct pcap_pkthdr *header, const u_char *packet)
 {
 
@@ -158,9 +141,23 @@ else cout << setw(10) << "No type";
 ---------------------------------------*/
 cout << header->len << "B";
 cout << endl;
-}
+
+
+if (savefile == true){
+    ofstream filetxt("Netsnifferlog.txt", ios::app);
+
+filetxt << left << setw(18) << timebuf
+        << setw(11) << protocol_identifier(protocol)
+        << setw(50) << ipflow
+        << setw(16) << port_identifier(srcport, dstport)
+        << header->len << "B" << endl;
+
+    filetxt.close();
+
 }
 
+}
+}
 
 /*---------------------------------------
               Int main
@@ -199,7 +196,7 @@ if(x < 0 || x >= interfaces.size()){
 cout << "\nYou picked interface: " << interfaces[x]->name << endl;
 
 // (interface, byte limit, promiscious mode, time out (ms), err buf) - paramaters.
-pcap_t *handle = pcap_open_live(interfaces[x]->name, 65535, 1, 65, errorbuffer); 
+pcap_t *handle = pcap_open_live(interfaces[x]->name, 65535, 1, 50, errorbuffer); 
 
 global_handle = handle;
 
@@ -228,9 +225,34 @@ if (pcap_setfilter(handle, &fp) == -1){
 
 
 
-
 if (handle == nullptr){
     cout << "could not open network interface " << interfaces[x]->name << errorbuffer;
+}
+
+
+bool save;
+cout << "Would you like to save files to a txt file (1, yes 0, no): ";
+cin >> save;
+
+if(save == true){
+    savefile = 1;
+
+
+    ofstream filetxt("Netsnifferlog.txt", ios::app);
+
+
+string dash = "";
+for(int i=0;i<110;i++) dash += "-";
+
+
+filetxt << "Timestamp"  << setw(15) 
+        << "Protocol"   <<  setw(42) 
+        << "Source IP:port -> Destination IP:port" << setw(18) 
+        << "port type"  << setw(17) 
+        << "Total size" << endl;
+
+filetxt << dash << endl;
+
 }
 
 
@@ -246,7 +268,7 @@ cout << endl;
 
 signal(SIGINT, signalHandler); //gracefully closes the loop when ctrl c. (if packets are indefinetely running).
 
-pcap_loop(handle, 10, packet_handler, nullptr); // loop handler
+pcap_loop(handle, -1, packet_handler, nullptr); // loop handler
 
 /*---------------------------------------
               Summary
