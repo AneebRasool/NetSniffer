@@ -4,15 +4,15 @@ Netsniffer is a packet sniffer aimed at helping begginer/intermediate computer s
 
 # Capabilities
 - live capture of packets
-- NetSniffer captures all Ipv4 based packets only.
 - Session summary at the end (shows total packets captured + total network data in bytes)
-- save packet sniffer output to a txt file
+- save packet sniffer output to a txt file OR csv file
+- run with command line arguments (like ./Netsniffer -i eno1 -s savefile.txt).
   
 Protocols Parsed:
-- Ethernet II (Ethertype, mac adresses)
-- IPv4 (source/destination ip, protocols used)
-- TCP (port type)
-- UDP (port type)
+- Ethernet II
+- IPv4
+- TCP
+- UDP 
 
 # How it works
 This project uses libpcap, an open source library that can capture network traffic on network interfaces. The packet sniffer is a cybersecurity based project, based mainly on the OSI model, ethernet type II model, TCP/UDP model and IPv4 model. It uses layers 3 to 4 on it.
@@ -46,6 +46,10 @@ You can install CMAKE to compile files.
 
 # Resources
 If you would like to learn cybersecurity, check out the models I discussed. If you would like to learn more about how libpcap operates, what each function does etc check out tcpdump's website: 'https://www.tcpdump.org/manpages/'
+
+#Limitations
+- NetSniffer captures all Ipv4 based packets only.
+
 
 
 
